@@ -11,7 +11,9 @@ enum ALLCH_ACH
 
 /// Whether to report lots of information messages to the console. This can be helpful to diagnose
 /// problems. You will likely want to set this macro to `false` for production builds.
-#macro ALLCH_VERBOSE  (ALLCH_RUNNING_FROM_IDE)
+#macro ALLCH_VERBOSE  false
+
+#macro ALLCH_STRICT  false
 
 #macro ALLCH_WARNINGS_HAVE_CALLSTACKS  true
 

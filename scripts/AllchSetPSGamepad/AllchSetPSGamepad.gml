@@ -11,12 +11,12 @@ function AllchSetPSGamepad(_gamepad)
     
     if (ALLCH_ON_PS5)
     {
-        psn_init_trophy(_gamepad);
-        _system.__psGamepad = _gamepad;
-        
         if (ALLCH_VERBOSE)
         {
             __AllchTrace($"Set PlayStation gamepad to {_gamepad}");
         }
+        
+        psn_init_trophy(_gamepad);
+        _system.__psGamepad = _gamepad;
     }
 }

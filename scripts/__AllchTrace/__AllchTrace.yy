@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"__AllchTrace",
   "parent":{
-    "name":"Debug",
-    "path":"folders/Allchievements/(System)/Debug.yy",
+    "name":"(System)",
+    "path":"folders/Allchievements/(System).yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

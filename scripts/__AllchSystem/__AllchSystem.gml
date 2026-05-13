@@ -21,6 +21,8 @@ function __AllchSystem()
         __localChanged = false;
         __localData = {};
         
+        __psStartedActivityDict = {};
+        
         __psGamepad = -1;
         __xboxUser = int64(0);
         
