@@ -1,5 +1,5 @@
-/// Unlocks the achievement associated with the given allch index. You should first have defined
-/// the allch with `AllchDefine()` in the configuration scripts.
+/// Unlocks the achievement associated with the given achivement identifier. You should first have
+/// created the achivement with `AllchCreate()` in the `__AllchConfig` script.
 /// 
 /// N.B. You must call `AllchSetPSGamepad()` or `AllchSetXboxUser()` before unlocking achievements
 ///      on PlayStation or Xbox.
@@ -10,39 +10,45 @@
 /// N.B. Allchievements does not call `gdk_init()`, `gdk_update()`, or `gdk_quit()` for you when
 ///      running on WIndows using the Xbox GDK extension. You must call these functions yourself.
 /// 
-/// If locally stored achievements are being used (as indicated by `AllchLocalGetUsing()`) then
-/// this function will return `true` if an achievement is newly unlocked. This positive return
-/// value might be used to trigger an in-game notification etc.
+/// If offline achievements are being used (as indicated by `ALLCH_USING_OFFLINE`) then this
+/// function will return `true` if an achievement is newly unlocked. This positive return
+/// value could be used to trigger an in-game notification etc.
 /// 
-/// @param achievementIndex
+/// @param identifier
 
-function AllchUnlock(_achievementIndex)
+function AllchUnlock(_identifier)
 {
-    static _system       = __AllchSystem();
-    static _allchToRefMap = _system.__allchToRefMap;
+    static _system    = __AllchSystem();
+    static _configMap = _system.__configMap;
     
-    var _struct = _allchToRefMap[? _achievementIndex];
-    if (_struct == undefined)
+    var _config = _configMap[? _identifier];
+    if (_config == undefined)
     {
-        __AllchSoftError($"Achievement index {_achievementIndex} not recognised");
+        __AllchSoftError($"Achievement `{_identifier}` not recognised");
         return false;
     }
     
-    var _ref = _struct.__serviceRef;
-    
-    if (_system.__local)
+    var _ref = _config.__ref;
+    if (_ref == undefined)
     {
-        //Set local values
+        if (ALLCH_VERBOSE)
+        {
+            __AllchTrace($"Achievement `{_identifier}` is disabled on this platform");
+        }
+    }
+    else if (ALLCH_USING_OFFLINE)
+    {
+        //Set offline values
         
-        if (_system.__localData[$ _ref] != true)
+        if (_system.__offlineDict[$ _ref] != true)
         {
             if (ALLCH_VERBOSE)
             {
-                __AllchTrace($"Awarding achievement {_achievementIndex} (service reference `{_ref}`)");
+                __AllchTrace($"Awarding offline achievement `{_identifier}` (reference `{_ref}`)");
             }
             
-            _system.__localData[$ _ref] = true;
-            _system.__localChanged = true;
+            _system.__offlineDict[$ _ref] = true;
+            _system.__offlineChanged = true;
             
             return true;
         }
@@ -50,7 +56,7 @@ function AllchUnlock(_achievementIndex)
         {
             if (ALLCH_VERBOSE)
             {
-                __AllchTrace($"Awarding achievement {_achievementIndex} but player already has it (service reference `{_ref}`)");
+                __AllchTrace($"Awarding offline achievement `{_identifier}` but player already has it (reference `{_ref}`)");
             }
         }
     }
@@ -60,20 +66,12 @@ function AllchUnlock(_achievementIndex)
         
         if (ALLCH_VERBOSE)
         {
-            __AllchTrace($"Awarding achievement {_achievementIndex} using remote service");
+            __AllchTrace($"Awarding achievement `{_identifier}` using remote service (reference `{_ref}`)");
         }
         
-        if (_system.__steamAvailable)
+        if (ALLCH_STEAM_AVAILABLE)
         {
             steam_set_achievement(_ref);
-        }
-        else if (ALLCH_USING_GAMECENTER)
-        {
-            GameCenter_Achievement_Report(_ref, 100, true);
-        }
-        else if (_system.__playServicesAvailable)
-        {
-            GooglePlayServices_Achievements_Unlock(_ref);
         }
         else if (ALLCH_USING_GDK)
         {
@@ -96,6 +94,14 @@ function AllchUnlock(_achievementIndex)
             {
                 psn_unlock_trophy(_system.__psGamepad, _ref);
             }
+        }
+        else if (ALLCH_USING_GAMECENTER)
+        {
+            GameCenter_Achievement_Report(_ref, 100, true);
+        }
+        else if (ALLCH_PLAY_SERVICES_AVAILABLE)
+        {
+            GooglePlayServices_Achievements_Unlock(_ref);
         }
         else
         {

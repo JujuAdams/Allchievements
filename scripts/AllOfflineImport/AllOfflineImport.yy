@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"AllOfflineImport",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"AllOfflineImport",
+  "parent":{
+    "name":"Offline",
+    "path":"folders/Allchievements/Offline.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"AllchOfflineGetHidden",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"AllchOfflineGetHidden",
+  "parent":{
+    "name":"Offline",
+    "path":"folders/Allchievements/Offline.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

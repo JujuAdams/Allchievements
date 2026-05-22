@@ -16,32 +16,28 @@ function __AllchSystem()
     {
         __AllchTrace($"Welcome to Allchievements by Juju Adams! This is version {ALLCH_VERSION}, {ALLCH_DATE}");
         
-        __runningDefinitions = true;
-        
-        __localChanged = false;
-        __localData = {};
+        __offlineChanged = false;
+        __offlineDict = {};
         
         __psStartedActivityDict = {};
         
         __psGamepad = -1;
         __xboxUser = int64(0);
         
-        __allchToRefMap   = ds_map_create();
-        __steamAsyncIDMap = ds_map_create();
+        __configMap   = ds_map_create();
+        __configOrder = [];
         
         __steamAvailable        = false;
         __playServicesAvailable = false;
         
         var _fallback = true;
         
-        if (ALLCH_FORCE_LOCAL_DATA)
+        if (ALLCH_FORCE_OFFLINE)
         {
-            __AllchTrace($"Forcing local data use via `ALLCH_FORCE_LOCAL_DATA` (__AllchDefinitionsLocal)");
+            __AllchTrace($"Forcing local data use via `ALLCH_FORCE_OFFLINE`");
             
             _fallback = false;
-            
-            __local = true;
-            __AllchDefinitionsLocal();
+            __offline = true;
         }
         else if (ALLCH_ON_DESKTOP)
         {
@@ -65,13 +61,12 @@ function __AllchSystem()
                 }
                 
                 _fallback = false;
-                
-                __local = false;
-                __AllchDefinitionsXbox();
+                __offline = false;
             }
             else if (ALLCH_USING_STEAMWORKS)
             { 
                 _fallback = false;
+                __offline = false;
                 
                 try
                 {
@@ -88,16 +83,13 @@ function __AllchSystem()
                     
                     if (ALLCH_VERBOSE)
                     {
-                        __AllchTrace("Using Steam remote service with `__AllchDefinitionsSteam`");
+                        __AllchTrace("Using Steam remote service");
                     }
                 }
                 else
                 {
                     __AllchSoftError("Steam extension present in game but failed to initialize\nPlease check your Steam extension settings and that Steam is running");
                 }
-                
-                __local = false;
-                __AllchDefinitionsSteam();
             }
         }
         else if (ALLCH_ON_IOS)
@@ -108,21 +100,14 @@ function __AllchSystem()
             
             if (not ALLCH_USING_GAMECENTER)
             {
-                __AllchTrace("GameCenter extension is not present");
+                __AllchTrace("GameCenter extension is not present, using offline definitions");
             }
             else
             {
                 __AllchTrace("GameCenter extension is present");
                 
                 _fallback = false;
-                
-                if (ALLCH_VERBOSE)
-                {
-                    __AllchTrace("Using GameCenter remote service with `__AllchDefinitionsGameCenter`");
-                }
-                
-                __local = false;
-                __AllchDefinitionsGameCenter();
+                __offline = false;
             }
         }
         else if (ALLCH_ON_ANDROID)
@@ -160,9 +145,7 @@ function __AllchSystem()
                     }
                     
                     _fallback = false;
-                    
-                    __local = false;
-                    __AllchDefinitionsPlayServices();
+                    __offline = false;
                 }
                 else
                 {
@@ -174,57 +157,56 @@ function __AllchSystem()
         {
             if (ALLCH_VERBOSE)
             {
-                __AllchTrace("Using PlayStation remote service with `__AllchDefinitionsPlayStation`");
+                __AllchTrace("Using PlayStation remote service");
             }
             
             _fallback = false;
-            
-            __local = false;
-            __AllchDefinitionsPlayStation();
+            __offline = false;
         }
         else if (ALLCH_ON_XBOX_SERIES)
         {
             if (ALLCH_VERBOSE)
             {
-                __AllchTrace("Using Xbox remote service with `__AllchDefinitionsXbox`");
+                __AllchTrace("Using Xbox remote service");
             }
             
             _fallback = false;
-            
-            __local = false;
-            __AllchDefinitionsXbox();
+            __offline = false;
         }
-        else if (ALLCH_ON_SWITCH)
+        else if (ALLCH_ON_SWITCH_X)
         {
+            _fallback = false;
+            __offline = ALLCH_SWITCH_X_OFFLINE;
+            
             if (ALLCH_VERBOSE)
             {
-                __AllchTrace("No remote service available on Switch, using locally stored data with `__AllchDefinitionsLocal`");
+                if (__offline)
+                {
+                    __AllchTrace("No remote service available on Switch, using offline");
+                }
+                else
+                {
+                    __AllchTrace("No remote service available on Switch, ignoring all achivements");
+                }
             }
-            
-            _fallback = false;
-            
-            __local = false;
-            __AllchDefinitionsLocal();
         }
         else
         {          
-            __AllchTrace($"Platform ({os_type}) has no explicit support, falling back on locally stored data with `__AllchDefinitionsLocal`");
+            __AllchTrace($"Platform ({os_type}) has no explicit support, falling back on offline");
             
             _fallback = false;
-            
-            __local = true;
-            __AllchDefinitionsLocal();
+            __offline = true;
         }
         
         if (_fallback)
         {
-            __AllchTrace($"Remote service not available, falling back on locally stored data with `__AllchDefinitionsLocal`");
-            
-            __local = true;
-            __AllchDefinitionsLocal();
+            __AllchTrace($"Remote service not available, falling back on offline");
+            __offline = true;
         }
         
-        __runningDefinitions = false;
+        __onBoot = true;
+        __AllchConfigOnBoot();
+        __onBoot = false;
     }
     
     return _system;

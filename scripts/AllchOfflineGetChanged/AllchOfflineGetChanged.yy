@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"AllchOfflineGetChanged",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"AllchOfflineGetChanged",
+  "parent":{
+    "name":"Offline",
+    "path":"folders/Allchievements/Offline.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
