@@ -18,8 +18,11 @@
 
 function AllchUnlock(_identifier)
 {
-    static _system    = __AllchSystem();
-    static _configMap = _system.__configMap;
+    static _system                = __AllchSystem();
+    static _configMap             = _system.__configMap;
+    static _xboxUnlockQueue       = _system.__xboxUnlockQueue;
+    static _xboxCachedMap         = _system.__xboxCachedMap;
+    static _xboxAchievementsCache = _system.__xboxAchievementsCache;
     
     var _config = _configMap[? _identifier];
     if (_config == undefined)
@@ -75,13 +78,46 @@ function AllchUnlock(_identifier)
         }
         else if (ALLCH_USING_GDK)
         {
-            if (_system.__xboxUser <= int64(0))
+            var _xboxUser = _system.__xboxUser;
+            if (_xboxUser <= int64(0))
             {
                 __AllchSoftError("Xbox user not set or invalid. Please set the user with `AllchSetXboxUser()` before calling `AllchUnlock()`");
             }
             else
             {
-                xboxone_achievements_set_progress(_system.__xboxUser, _ref, 100);
+                var _cacheDict = _xboxAchievementsCache[? _xboxUser];
+                if (_xboxCachedMap[? _xboxUser] && is_struct(_cacheDict))
+                {
+                    if ((not _cacheDict[$ _ref]) ?? false)
+                    {
+                        if (ALLCH_VERBOSE)
+                        {
+                            __AllchTrace($"Achievement `{_identifier}` (reference {_ref}) has not been awarded previously this session, setting progress now");
+                        }
+                        
+                        xboxone_achievements_set_progress(_system.__xboxUser, _ref, 100);
+                        _cacheDict[$ _ref] = true;
+                    }
+                    else
+                    {
+                        if (ALLCH_VERBOSE)
+                        {
+                            __AllchTrace($"Achievement `{_identifier}` (reference {_ref}) already awarded this session, skipping");
+                        }
+                    }
+                }
+                else
+                {
+                    if (ALLCH_VERBOSE)
+                    {
+                        __AllchTrace($"Xbox user achievements cache not yet received, queuing achievement `{_identifier}` (reference {_ref})");
+                    }
+                    
+                    if (array_get_index(_xboxUnlockQueue, _ref) < 0)
+                    {
+                        array_push(_xboxUnlockQueue, _ref);
+                    }
+                }
             }
         }
         else if (ALLCH_ON_PS5)

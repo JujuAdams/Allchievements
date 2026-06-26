@@ -23,6 +23,9 @@ function __AllchSystem()
         
         __psGamepad = -1;
         __xboxUser = int64(0);
+        __xboxUnlockQueue = [];
+        __xboxCachedMap = ds_map_create();
+        __xboxAchievementsCache = ds_map_create();
         
         __configMap   = ds_map_create();
         __configOrder = [];
@@ -207,6 +210,37 @@ function __AllchSystem()
         __onBoot = true;
         __AllchConfigOnBoot();
         __onBoot = false;
+        
+        time_source_start(time_source_create(time_source_global, 1, time_source_units_frames, function()
+        {
+            //Ensure existance of our controller object
+            if (not instance_exists(AllchControllerObject))
+            {
+                //Try to detect deactivation of the controller object
+                instance_activate_object(AllchControllerObject);
+                if (instance_exists(AllchControllerObject))
+                {
+                    //Be nasty when running from the IDE >:(
+                    __AllchSoftError("AllchControllerObject has been deactivated\nPlease ensure that AllchControllerObject is never deactivated\nYou may need to use instance_activate_object(AllchControllerObject)");
+                }
+                else
+                {
+                    static _created = false;
+                    if (_created) __AllchSoftError("AllchControllerObject has been destroyed\nPlease ensure that AllchControllerObject is never destroyed");
+                    _created = true;
+                    
+                    instance_create_depth(0, 0, __SUS_CONTROLLER_INSTANCE_DEPTH, AllchControllerObject);
+                }
+            }
+        
+            //Detect if the controller object has been set to non-persistent
+            if (!AllchControllerObject.persistent)
+            {
+                __AllchSoftError("AllchControllerObject has been set as non-persistent\nPlease ensure that AllchControllerObject is always persistent");
+                AllchControllerObject.persistent = true;
+            }
+        },
+        [], -1));
     }
     
     return _system;

@@ -26,6 +26,11 @@ function __AllchConfigOnBoot()
 /// problems. You will likely want to set this macro to `false` for production builds.
 #macro ALLCH_VERBOSE  false
 
+/// Whether to report async events to the console. This feature is only enabled when using GDK as
+/// this is the only platform that needs async events outputted for debugging. You will likely want
+/// to set this macro to `false` for production builds.
+#macro ALLCH_VERBOSE_ASYC  false
+
 /// Enables strict type checking when calling some functions. This is helpful for debugging edge
 /// cases but ordinarily should be left turned off.
 #macro ALLCH_STRICT  false

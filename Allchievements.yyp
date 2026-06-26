@@ -55,13 +55,14 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2026.0.0.15",
+    "IDEVersion":"2026.0.0.16",
   },
   "name":"Allchievements",
   "resources":[
     {"id":{"name":"GDKExtension","path":"extensions/GDKExtension/GDKExtension.yy",},},
     {"id":{"name":"Steamworks","path":"extensions/Steamworks/Steamworks.yy",},},
     {"id":{"name":"fntConsolas","path":"fonts/fntConsolas/fntConsolas.yy",},},
+    {"id":{"name":"AllchControllerObject","path":"objects/AllchControllerObject/AllchControllerObject.yy",},},
     {"id":{"name":"oTest","path":"objects/oTest/oTest.yy",},},
     {"id":{"name":"rMain","path":"rooms/rMain/rMain.yy",},},
     {"id":{"name":"__AllchConfig","path":"scripts/__AllchConfig/__AllchConfig.yy",},},
@@ -77,6 +78,7 @@
     {"id":{"name":"AllchGetIdentifier","path":"scripts/AllchGetIdentifier/AllchGetIdentifier.yy",},},
     {"id":{"name":"AllchGetPSGamepad","path":"scripts/AllchGetPSGamepad/AllchGetPSGamepad.yy",},},
     {"id":{"name":"AllchGetXboxUser","path":"scripts/AllchGetXboxUser/AllchGetXboxUser.yy",},},
+    {"id":{"name":"AllchGetXboxUserReady","path":"scripts/AllchGetXboxUserReady/AllchGetXboxUserReady.yy",},},
     {"id":{"name":"AllchOfflineGetChanged","path":"scripts/AllchOfflineGetChanged/AllchOfflineGetChanged.yy",},},
     {"id":{"name":"AllchOfflineGetHidden","path":"scripts/AllchOfflineGetHidden/AllchOfflineGetHidden.yy",},},
     {"id":{"name":"AllchOfflineGetUnlocked","path":"scripts/AllchOfflineGetUnlocked/AllchOfflineGetUnlocked.yy",},},

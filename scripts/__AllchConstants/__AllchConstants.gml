@@ -1,5 +1,5 @@
-#macro ALLCH_VERSION  "1.0.0"
-#macro ALLCH_DATE     "2026-04-17"
+#macro ALLCH_VERSION  "1.1.0"
+#macro ALLCH_DATE     "2026-06-26"
 
 #macro ALLCH_RUNNING_FROM_IDE  (GM_build_type == "run")
 
