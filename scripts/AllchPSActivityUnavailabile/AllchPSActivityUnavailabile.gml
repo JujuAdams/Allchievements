@@ -29,7 +29,7 @@ function AllchPSActivityUnavailabile(_activityID)
             
             var _map = ds_map_create();
             _map[? "mode"] = "delta";
-            ds_map_add_list(_map, "unavailableActivities", _list);
+            _map[? "unavailableActivities"] = [_activityID];
             
             psn_post_uds_event(_system.__psGamepad, "activityAvailabilityChange", _map);
             ds_map_destroy(_map);
