@@ -19,7 +19,7 @@ function AllchSetXboxUser(_xboxUser)
             }
         }
         
-        if (_xboxUser < 0)
+        if (_xboxUser <= 0)
         {
             _system.__currentPlayer = undefined;
         }

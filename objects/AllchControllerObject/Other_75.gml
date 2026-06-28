@@ -66,8 +66,11 @@ with(__AllchSystem())
                 var _id = _achievementData[$ "id"];
                 
                 var _identifier = __xboxReferenceToIdent[? _id];
-                
-                if (_identifier != undefined)
+                if (_identifier == undefined)
+                {
+                    __AllchWarning($"Could not find local achievement definition for reference `{_id}`");
+                }
+                else
                 {
                     var _dataStruct = _playerStruct.__EnsureProgress(_identifier);
                     
@@ -75,34 +78,35 @@ with(__AllchSystem())
                     {
                         if (ALLCH_VERBOSE)
                         {
-                            __AllchTrace($"Achievement `{_identifier}` __unlocked for user {_userID}");
+                            __AllchTrace($"Achievement `{_identifier}` unlocked for user {_userID}");
                         }
                         
-                        _dataStruct[$ _id] = true;
+                        _dataStruct.__unlocked = true;
+                        _dataStruct.__existingPercentage = 100;
                     }
-                    
-                    var _newValue = 0;
-                    
-                    var _progressionStruct = _achievementData[$ "progressState"];
-                    if (is_struct(_progressionStruct))
+                    else
                     {
+                        var _existingPercentage = undefined;
                         try
                         {
-                            _newValue = real(_progressionStruct[$ "currentProgressValue"]);
+                            var _requirement = _achievementData.progression.requirements[0];
+                            var _currentProgress = real(_requirement.currentProgressValue);
+                            var _targetProgress = real(_requirement.targetProgressValue);
+                            _existingPercentage = 100*(_currentProgress / _targetProgress);
                         }
                         catch(_error)
                         {
-                            
-                        }
-                    }
-                    
-                    if ((_newValue != undefined) && (_newValue > _dataStruct.__value))
-                    {
-                        _dataStruct.__value = _newValue;
                         
-                        if (ALLCH_VERBOSE)
+                        }
+                        
+                        if (_existingPercentage != undefined)
                         {
-                            __AllchTrace($"Achievement `{_identifier}` __value is {_newValue} for user {_userID}");
+                            _dataStruct.__existingPercentage = floor(_existingPercentage) + 1;
+                            
+                            if (ALLCH_VERBOSE)
+                            {
+                                __AllchTrace($"Achievement `{_identifier}` existing percentage is {_existingPercentage}% for user {_userID}");
+                            }
                         }
                     }
                 }

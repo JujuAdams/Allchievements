@@ -50,7 +50,7 @@ function AllchImport(_string)
             }
             else
             {
-                AllchSetMax(_identifier, _value);
+                AllchSetValue(_identifier, _value);
             }
         }
     }

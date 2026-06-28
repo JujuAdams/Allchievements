@@ -99,7 +99,7 @@ function __AllchClassPlayer(_playerID = undefined) constructor
         {
             //Resubmit
             
-            var _percentage = 100*clamp(_value / _targetValue, 0, 1);
+            var _percentage = clamp(100*_value / _targetValue, 0, 100);
             
             if (ALLCH_USING_GAMECENTER)
             {
@@ -112,20 +112,30 @@ function __AllchClassPlayer(_playerID = undefined) constructor
             }
             else if (ALLCH_USING_GDK)
             {
-                if (ALLCH_VERBOSE)
+                if (_percentage <= _progressStruct.__existingPercentage)
                 {
-                    __AllchTrace($"Setting achievement percentage for `{_identifier}` to {_percentage}% using XBOX reference `{_config.xbox}`");
-                }
-                
-                if (_newlyUnlocked)
-                {
-                    //Immediately award an achievement if it's newly unlocked
-                    xboxone_achievements_set_progress(__playerID, _config.xbox, 100);
-                    __AllchDequeueXboxAchievement(__playerID, _config.xbox);
+                    if (ALLCH_VERBOSE)
+                    {
+                        __AllchTrace($"New percentage {_percentage}% for `{_identifier}` is not greater than existing percentage {_progressStruct.__existingPercentage}% for XBOX reference `{_config.xbox}`");
+                    }
                 }
                 else
                 {
-                    __AllchQueueXboxAchievement(__playerID, _config.xbox, _percentage);
+                    if (ALLCH_VERBOSE)
+                    {
+                        __AllchTrace($"Setting achievement percentage for `{_identifier}` to {_percentage}% using XBOX reference `{_config.xbox}`");
+                    }
+                    
+                    if (_newlyUnlocked)
+                    {
+                        //Immediately award an achievement if it's newly unlocked
+                        xboxone_achievements_set_progress(__playerID, _config.xbox, 100);
+                        __AllchDequeueXboxAchievement(__playerID, _config.xbox);
+                    }
+                    else if (not _unlocked)
+                    {
+                        __AllchQueueXboxAchievement(__playerID, _config.xbox, _percentage);
+                    }
                 }
             }
         }

@@ -134,6 +134,7 @@ function AllchCreate(_identifier, _config)
         
         if (_config.xbox != undefined)
         {
+            _config.xbox = string(_config.xbox);
             _xboxReferenceToIdent[? _config.xbox] = _identifier;
         }
     }

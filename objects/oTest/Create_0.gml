@@ -8,3 +8,5 @@ if (ALLCH_ON_XBOX_SERIES)
         AllchSetXboxUser(_activatingUser);
     }
 }
+
+show_debug_message($"xboxone_get_activating_user() = {xboxone_get_activating_user()}");

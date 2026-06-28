@@ -11,7 +11,11 @@ repeat(gamepad_get_device_count())
         
         gamepad = _i;
         AllchSetPSGamepad(_i);
-        AllchSetXboxUser(xboxone_user_for_pad(_i));
+        
+        if (xboxone_user_for_pad(_i) > 0)
+        {
+            AllchSetXboxUser(xboxone_user_for_pad(_i));
+        }
     }
     
     ++_i;

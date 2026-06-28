@@ -10,16 +10,10 @@ function AllchGetXboxUserReady()
         return true;
     }
     
-    with(_system)
+    with(_system.__currentPlayer)
     {
-        if (_system.__currentPlayer == undefined)
-        {
-            __AllchError("No player set. Please call `AllchSetPSGamepad()` or `AllchSetXboxUser()` as appropriate");
-            return 0;
-        }
-        
-        return __currentPlayer.__ready;
+        return __ready;
     }
     
-    return true;
+    return false;
 }

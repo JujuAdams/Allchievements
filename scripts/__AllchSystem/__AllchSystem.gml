@@ -25,6 +25,7 @@ function __AllchSystem()
         __psStartedActivityDict = {};
         
         __xboxReferenceToIdent = ds_map_create();
+        __xboxQueue = [];
         
         __configMap   = ds_map_create();
         __configOrder = [];
@@ -216,6 +217,12 @@ function __AllchSystem()
             {
                 __AllchSoftError("`AllchControllerObject` has been set as non-persistent\nPlease ensure that `AllchControllerObject` is always persistent");
                 AllchControllerObject.persistent = true;
+            }
+            
+            var _queueTop = array_pop(__xboxQueue);
+            if (is_struct(_queueTop))
+            {
+                xboxone_achievements_set_progress(_queueTop.__userID, _queueTop.__ref, _queueTop.__percentage);
             }
         },
         [], -1));
