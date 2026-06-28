@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"AllchOfflineGetChanged",
+  "%Name":"AllchDebugClear",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AllchOfflineGetChanged",
+  "name":"AllchDebugClear",
   "parent":{
-    "name":"Offline",
-    "path":"folders/Allchievements/Offline.yy",
+    "name":"Save & Load",
+    "path":"folders/Allchievements/Save & Load.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

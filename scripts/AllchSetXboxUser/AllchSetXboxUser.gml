@@ -6,26 +6,26 @@
 function AllchSetXboxUser(_xboxUser)
 {
     static _system = __AllchSystem();
-    static _xboxAchievementsCache = _system.__xboxAchievementsCache;
     
     if (ALLCH_USING_GDK)
     {
         _xboxUser = int64(_xboxUser);
-        _system.__xboxUser = _xboxUser;
         
-        if (_xboxUser != 0)
+        if (_xboxUser != AllchGetXboxUser())
         {
-            //If we haven't tried to collect achievements for this user yet, start now
-            if (not ds_map_exists(_xboxAchievementsCache, _xboxUser))
+            if (ALLCH_VERBOSE)
             {
-                _xboxAchievementsCache[? _xboxUser] = {};
-                xboxone_get_achievements(_xboxUser);
+                __AllchTrace($"Set Xbox user to {_xboxUser}");
             }
         }
         
-        if (ALLCH_VERBOSE)
+        if (_xboxUser < 0)
         {
-            __AllchTrace($"Set Xbox user to {_xboxUser}");
+            _system.__currentPlayer = undefined;
+        }
+        else
+        {
+            _system.__currentPlayer = __AllchEnsurePlayer(_xboxUser);
         }
     }
 }

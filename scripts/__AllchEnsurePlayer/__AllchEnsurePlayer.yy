@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"AllOfflineExport",
+  "%Name":"__AllchEnsurePlayer",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AllOfflineExport",
+  "name":"__AllchEnsurePlayer",
   "parent":{
-    "name":"Offline",
-    "path":"folders/Allchievements/Offline.yy",
+    "name":"(System)",
+    "path":"folders/Allchievements/(System).yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

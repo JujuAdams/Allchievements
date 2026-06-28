@@ -4,7 +4,22 @@
 function AllchGetXboxUserReady()
 {
     static _system = __AllchSystem();
-    static _xboxCachedMap = _system.__xboxCachedMap;
     
-    return ALLCH_USING_GDK? (_xboxCachedMap[? _system.__xboxUser] ?? false) : true;
+    if (not ALLCH_USING_GDK)
+    {
+        return true;
+    }
+    
+    with(_system)
+    {
+        if (_system.__currentPlayer == undefined)
+        {
+            __AllchError("No player set. Please call `AllchSetPSGamepad()` or `AllchSetXboxUser()` as appropriate");
+            return 0;
+        }
+        
+        return __currentPlayer.__ready;
+    }
+    
+    return true;
 }

@@ -6,6 +6,8 @@ function AllchPSActivityAvailabile(_activityID)
     
 	if (ALLCH_ON_PS5)
     {
+        var _psGamepad = AllchGetPSGamepad();
+        
         if (not is_string(_activityID))
         {
             if (ALLCH_STRICT)
@@ -13,7 +15,7 @@ function AllchPSActivityAvailabile(_activityID)
                 __AllchError($"`activityID` must be a string");
             }
         }
-        else if (_system.__psGamepad < 0)
+        else if (_psGamepad < 0)
         {
             __AllchSoftError("PlayStation gamepad not set or invalid. Please set the gamepad with `AllchSetPSGamepad()` before calling `AllchPSStartActivity()`");
         }
@@ -28,7 +30,7 @@ function AllchPSActivityAvailabile(_activityID)
             _map[? "mode"] = "delta";
             _map[? "availableActivities"] = [_activityID];
             
-            psn_post_uds_event(_system.__psGamepad, "activityAvailabilityChange", _map);
+            psn_post_uds_event(_psGamepad, "activityAvailabilityChange", _map);
             ds_map_destroy(_map);
         }
     }

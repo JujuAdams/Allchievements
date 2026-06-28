@@ -1,13 +1,13 @@
-/// Returns whether an offline achivement is hidden.
+/// Returns whether an achievement is set as hidden.
 /// 
 /// @param identifier
 
-function AllchOfflineGetHidden(_identifier)
+function AllchGetHidden(_identifier)
 {
     static _system    = __AllchSystem();
     static _configMap = _system.__configMap;
     
-    if (AllchOfflineGetUnlocked(_identifier))
+    if (AllchGetUnlocked(_identifier))
     {
         return false;
     }

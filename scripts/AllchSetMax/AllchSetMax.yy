@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"AllchUnlock",
+  "%Name":"AllchSetMax",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AllchUnlock",
+  "name":"AllchSetMax",
   "parent":{
     "name":"Setters",
     "path":"folders/Allchievements/Setters.yy",

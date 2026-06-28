@@ -24,7 +24,7 @@ if (keyboard_check_pressed(ord("1")) || gamepad_button_check_pressed(gamepad, gp
 
 if (keyboard_check_pressed(ord("2")) || gamepad_button_check_pressed(gamepad, gp_padr))
 {
-    AllchUnlock(ALLCH_ACH.SLAY_FIFTY_THOUSAND_RATS);
+    AllchIncrement(ALLCH_ACH.SLAY_FIVE_RATS, 1);
 }
 
 if (keyboard_check_pressed(ord("3")) || gamepad_button_check_pressed(gamepad, gp_padd))
@@ -37,36 +37,34 @@ if (keyboard_check_pressed(ord("4")) || gamepad_button_check_pressed(gamepad, gp
     AllchUnlock(ALLCH_ACH.WACKY_NPC_INTERACTION);
 }
 
-if (keyboard_check_pressed(ord("C")) || gamepad_button_check_pressed(gamepad, gp_face4))
-{
-    AllchLocalLockAll();
-}
-
 if (keyboard_check_pressed(ord("E")) || gamepad_button_check_pressed(gamepad, gp_start))
 {
-    var _data = AllchExportLocalData();
-    
-    var _string = json_stringify(_data);
+    var _string = AllchExport();
     var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
     buffer_write(_buffer, buffer_text, _string);
-    buffer_save(_buffer, "allch.json");
+    buffer_save(_buffer, "allch.dat");
     buffer_delete(_buffer);
     
-    show_debug_message("Saved `allch.json`");
+    show_debug_message("Saved `allch.dat`");
 }
 
 if (keyboard_check_pressed(ord("I")) || gamepad_button_check_pressed(gamepad, gp_select))
 {
-    if (not file_exists("allch.json"))
+    if (not file_exists("allch.dat"))
     {
-        show_debug_message("`allch.json` does not exist");
+        show_debug_message("`allch.dat` does not exist");
     }
     else
     {
-        var _buffer = buffer_load("allch.json");
+        var _buffer = buffer_load("allch.dat");
         var _string = buffer_read(_buffer, buffer_text);
         buffer_delete(_buffer);
         
-        AllchImportLocalData(json_parse(_string));
+        AllchImport(_string);
     }
+}
+
+if (keyboard_check_pressed(ord("C")) || gamepad_button_check_pressed(gamepad, gp_face4))
+{
+    AllchDebugClear();
 }

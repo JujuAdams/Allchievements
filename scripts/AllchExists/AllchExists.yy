@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"AllchExists",
   "parent":{
-    "name":"Allchievements",
-    "path":"folders/Allchievements.yy",
+    "name":"Getters",
+    "path":"folders/Allchievements/Getters.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -13,7 +13,6 @@
 #macro ALLCH_ON_PS5          (os_type == os_ps5)
 #macro ALLCH_ON_SWITCH_X     ((os_type == os_switch) || (os_type == os_switch2))
 
-#macro ALLCH_USING_OFFLINE            (__AllchSystem().__offline)
 #macro ALLCH_STEAM_AVAILABLE          (__AllchSystem().__steamAvailable)
 #macro ALLCH_USING_STEAMWORKS         (ALLCH_ON_DESKTOP && extension_exists("Steamworks"))
 #macro ALLCH_USING_GAMECENTER         (ALLCH_ON_IOS && extension_exists("GameCenter"))

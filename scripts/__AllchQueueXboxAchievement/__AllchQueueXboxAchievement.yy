@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__AllchQueueXboxAchievement",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__AllchQueueXboxAchievement",
+  "parent":{
+    "name":"(System)",
+    "path":"folders/Allchievements/(System).yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

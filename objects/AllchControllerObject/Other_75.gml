@@ -14,53 +14,96 @@ with(__AllchSystem())
     {
         if (async_load[? "event_type"] == "achievements info")
         {
-            if (ds_map_exists(__xboxCachedMap, __xboxUser))
+            var _userID = undefined;
+            
+            try
             {
-                __AllchWarning("Already cached achievements for user {__xboxUser}");
+                _userID = int64(async_load[? "userID"]);
+            }
+            catch(_error)
+            {
+                
+            }
+            
+            if (_userID == undefined)
+            {
+                __AllchSoftError($"Failed to parse user ID (typeof = {async_load[? "userID"]})");
                 return;
             }
             
-            //We only try to get cached achievements once
-            __xboxCachedMap[? __xboxUser] = true;
+            var _playerStruct = __AllchEnsurePlayer(_userID);
+            if (_playerStruct.__ready)
+            {
+                __AllchWarning($"Already received achievements for user {_userID}");
+                return;
+            }
+            
+            _playerStruct.__ready = true;
             
             if (async_load[? "error"] != 0)
             {
-                __AllchWarning($"Received error `{async_load[? "error"]}` when getting achievements for user {__xboxUser}. Falling back on resubmission");
+                __AllchWarning($"Received error `{async_load[? "error"]}` when getting achievements for user {_userID}");
                 return;
             }
             
             if (not async_load[? "succeeded"])
             {
-                __AllchWarning($"Getting achievements for user {__xboxUser} returned as unsuccessful. Falling back on resubmission");
+                __AllchWarning($"Getting achievements for user {_userID} returned as unsuccessful");
                 return;
             }
             
             var _array = async_load[? "achievements"];
             if (not is_array(_array))
             {
-                __AllchWarning($"Achievements for user {__xboxUser} returned invalid data (not an array). Falling back on resubmission");
+                __AllchWarning($"Achievements for user {_userID} returned invalid data (not an array)");
                 return;
             }
             
-            var _cacheDict = __xboxAchievementsCache[? __xboxUser];
             var _i = 0;
             repeat(array_length(_array))
             {
                 var _achievementData = _array[_i];
                 var _id = _achievementData[$ "id"];
                 
-                if (_id != undefined)
+                var _identifier = __xboxReferenceToIdent[? _id];
+                
+                if (_identifier != undefined)
                 {
-                    _id = string(_id);
+                    var _dataStruct = _playerStruct.__EnsureProgress(_identifier);
                     
                     if (_achievementData[$ "progressState"] == xboxone_achievement_progress_unlocked)
                     {
                         if (ALLCH_VERBOSE)
                         {
-                            __AllchTrace($"Achievement `{_id}` unlocked for user {__xboxUser}");
+                            __AllchTrace($"Achievement `{_identifier}` __unlocked for user {_userID}");
                         }
                         
-                        _cacheDict[$ _id] = true;
+                        _dataStruct[$ _id] = true;
+                    }
+                    
+                    var _newValue = 0;
+                    
+                    var _progressionStruct = _achievementData[$ "progressState"];
+                    if (is_struct(_progressionStruct))
+                    {
+                        try
+                        {
+                            _newValue = real(_progressionStruct[$ "currentProgressValue"]);
+                        }
+                        catch(_error)
+                        {
+                            
+                        }
+                    }
+                    
+                    if ((_newValue != undefined) && (_newValue > _dataStruct.__value))
+                    {
+                        _dataStruct.__value = _newValue;
+                        
+                        if (ALLCH_VERBOSE)
+                        {
+                            __AllchTrace($"Achievement `{_identifier}` __value is {_newValue} for user {_userID}");
+                        }
                     }
                 }
                 

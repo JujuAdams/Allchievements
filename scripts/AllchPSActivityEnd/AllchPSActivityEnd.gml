@@ -13,6 +13,8 @@ function AllchPSActivityEnd(_activityID, _outcome = "completed", _score = undefi
     
 	if (ALLCH_ON_PS5)
     {
+        var _psGamepad = AllchGetPSGamepad();
+        
         if (not is_string(_activityID))
         {
             if (ALLCH_STRICT)
@@ -20,7 +22,7 @@ function AllchPSActivityEnd(_activityID, _outcome = "completed", _score = undefi
                 __AllchError($"`activityID` must be a string");
             }
         }
-        else if (_system.__psGamepad < 0)
+        else if (_psGamepad < 0)
         {
             __AllchSoftError("PlayStation gamepad not set or invalid. Please set the gamepad with `AllchSetPSGamepad()` before calling `AllchPSActivityEnd()`");
         }
@@ -57,7 +59,7 @@ function AllchPSActivityEnd(_activityID, _outcome = "completed", _score = undefi
                 }
             }
             
-            psn_post_uds_event(_system.__psGamepad, "activityEnd", _map);
+            psn_post_uds_event(_psGamepad, "activityEnd", _map);
             ds_map_destroy(_map);
             
             struct_remove(_psStartedActivityDict, _activityID);

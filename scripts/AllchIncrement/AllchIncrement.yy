@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"AllOfflineImport",
+  "%Name":"AllchIncrement",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AllOfflineImport",
+  "name":"AllchIncrement",
   "parent":{
-    "name":"Offline",
-    "path":"folders/Allchievements/Offline.yy",
+    "name":"Setters",
+    "path":"folders/Allchievements/Setters.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

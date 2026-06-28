@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"AllchUnlock",
+  "%Name":"AllchGetUnlocked",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AllchUnlock",
+  "name":"AllchGetUnlocked",
   "parent":{
-    "name":"Setters",
-    "path":"folders/Allchievements/Setters.yy",
+    "name":"Getters",
+    "path":"folders/Allchievements/Getters.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

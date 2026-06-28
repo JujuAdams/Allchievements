@@ -11,12 +11,21 @@ function AllchSetPSGamepad(_gamepad)
     
     if (ALLCH_ON_PS5)
     {
-        if (ALLCH_VERBOSE)
+        if (_gamepad != AllchGetPSGamepad())
         {
-            __AllchTrace($"Set PlayStation gamepad to {_gamepad}");
+            if (ALLCH_VERBOSE)
+            {
+                __AllchTrace($"Set PlayStation gamepad to {_xboxUser}");
+            }
         }
         
-        psn_init_trophy(_gamepad);
-        _system.__psGamepad = _gamepad;
+        if (_gamepad < 0)
+        {
+            _system.__currentPlayer = undefined;
+        }
+        else
+        {
+            _system.__currentPlayer = __AllchEnsurePlayer(_gamepad);
+        }
     }
 }

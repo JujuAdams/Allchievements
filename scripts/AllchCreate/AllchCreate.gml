@@ -12,12 +12,11 @@
 /// Exactly what value is needed depends on the platform. Please refer to platform/SDK documentation
 /// for official information. However, the following is a brief guide:
 /// 
-/// Offline Data: `.offline`
-///   This value must be a string. Offline data is used on Nintendo Switch if `ALLCH_SWITCH_OFFLINE`
-///   is set to `true`.
+/// Local Data: `.local`
+///   This value must be a string. Local data is used on all platforms.
 /// 
-/// N.B. Once used, the offline value must never be changed after a game has been published. The
-///      offline value must correlate between versions of the game otherwise players will lose game
+/// N.B. Once used, the local value must never be changed after a game has been published. The
+///      local value must correlate between versions of the game otherwise players will lose game
 ///      progress.
 /// 
 /// Steam: `.steam`
@@ -27,15 +26,13 @@
 ///   to other platforms as it reduces the amount of refactoring needed.
 /// 
 /// Switch & Switch 2:
-///   Nintendo Switch has no native achievement system. If `ALLCH_SWITCH_OFFLINE` is set to
-///   `false` then all achivements will be ignored on Switch. If you have set `ALLCH_SWITCH_OFFLINE`
-///   to `true` then the offline storage system will be used.
+///   Nintendo Switch has no native achievement system.
 /// 
 /// PlayStation: `.playStation`
 ///   This value must be an integer that is the index of the trophy as set in the UDS backend.
 ///   Since a platinum trophy is usually index `0`, trophy indexes tend to start at `1`.
 ///
-/// N.B. You do not need to define platinum trophy when using Allchievements. PlayStation handles
+/// N.B. You do not need to define platinum trophies when using Allchievements. PlayStation handles
 ///      awarding platinum trophies automatically.
 /// 
 /// Xbox / Windows GDK: `.xbox`
@@ -53,9 +50,11 @@
 
 function AllchCreate(_identifier, _config)
 {
-    static _system      = __AllchSystem();
-    static _configMap   = _system.__configMap;
-    static _configOrder = _system.__configOrder;
+    static _system                = __AllchSystem();
+    static _configMap             = _system.__configMap;
+    static _configOrder           = _system.__configOrder;
+    static _xboxReferenceToIdent  = _system.__xboxReferenceToIdent;
+    static _localToIdentifierDict = _system.__localToIdentifierDict;
     
     if (not _system.__onBoot)
     {
@@ -68,25 +67,10 @@ function AllchCreate(_identifier, _config)
         __AllchError($"Achievement `{_identifier}` already exists");
     }
     
-    if (_config == undefined)
-    {
-        _config = {
-            offline:      undefined,
-            playStation:  undefined,
-            xbox:         undefined,
-            playServices: undefined,
-            gameCenter:   undefined,
-            hidden:       true,
-        };
-    }
-    
     if (not is_struct(_config))
     {
         __AllchError("Achievement configuration must be a struct");
     }
-    
-    //Ensure .hidden is set
-    _config[$ "hidden"] ??= false;
     
     static _funcCheckIsString = function(_struct, _variableName)
     {
@@ -124,12 +108,14 @@ function AllchCreate(_identifier, _config)
         return true;
     }
     
-    if (ALLCH_USING_OFFLINE)
-    {
-        if (not _funcCheckIsString(_config, "offline")) return;
-        _config.__ref = _config.offline;
-    }
-    else if (ALLCH_USING_STEAMWORKS)
+    if (not _funcCheckIsString(_config, "local")) return;
+    _localToIdentifierDict[$ _config.local] = _identifier;
+    
+    //Ensure .hidden is set
+    _config[$ "hidden"] ??= false;
+    _config[$ "target"] ??= 1;
+    
+    if (ALLCH_USING_STEAMWORKS)
     {
         if (not _funcCheckIsString(_config, "steam")) return;
         
@@ -137,37 +123,27 @@ function AllchCreate(_identifier, _config)
         {
             _config.steam = _identifier;
         }
-        
-        _config.__ref = _config.steam;
-    }
-    else if (ALLCH_ON_SWITCH_X && (not ALLCH_USING_OFFLINE))
-    {
-        _config.__ref = undefined;
     }
     else if (ALLCH_ON_PS5)
     {
         if (not _funcCheckIsNumber(_config, "playStation")) return;
-        _config.__ref = _config.playStation;
     }
     else if (ALLCH_USING_GDK)
     {
         if (not _funcCheckIsString(_config, "xbox")) return;
-        _config.__ref = _config.xbox;
+        
+        if (_config.xbox != undefined)
+        {
+            _xboxReferenceToIdent[? _config.xbox] = _identifier;
+        }
     }
     else if (ALLCH_USING_PLAY_SERVICES)
     {
         if (not _funcCheckIsString(_config, "playServices")) return;
-        _config.__ref = _config.playServices;
     }
     else if (ALLCH_USING_GAMECENTER)
     {
         if (not _funcCheckIsString(_config, "gameCenter")) return;
-        _config.__ref = _config.gameCenter;
-    }
-    else
-    {
-        __AllchSoftError("Defensive branch reached. Please report this error");
-        _config.__ref = undefined;
     }
     
     if (ALLCH_VERBOSE)

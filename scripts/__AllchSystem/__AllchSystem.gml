@@ -1,3 +1,5 @@
+#macro __ALLCH_SAVE_VERSION  1
+
 __AllchSystem();
 
 function __AllchSystem()
@@ -16,16 +18,13 @@ function __AllchSystem()
     {
         __AllchTrace($"Welcome to Allchievements by Juju Adams! This is version {ALLCH_VERSION}, {ALLCH_DATE}");
         
-        __offlineChanged = false;
-        __offlineDict = {};
+        __playerMap = ds_map_create();
+        
+        __localToIdentifierDict = {};
         
         __psStartedActivityDict = {};
         
-        __psGamepad = -1;
-        __xboxUser = int64(0);
-        __xboxUnlockQueue = [];
-        __xboxCachedMap = ds_map_create();
-        __xboxAchievementsCache = ds_map_create();
+        __xboxReferenceToIdent = ds_map_create();
         
         __configMap   = ds_map_create();
         __configOrder = [];
@@ -33,16 +32,11 @@ function __AllchSystem()
         __steamAvailable        = false;
         __playServicesAvailable = false;
         
+        __currentPlayer = (ALLCH_ON_PS5 || ALLCH_USING_GDK)? undefined : new __AllchClassPlayer();
+        
         var _fallback = true;
         
-        if (ALLCH_FORCE_OFFLINE)
-        {
-            __AllchTrace($"Forcing local data use via `ALLCH_FORCE_OFFLINE`");
-            
-            _fallback = false;
-            __offline = true;
-        }
-        else if (ALLCH_ON_DESKTOP)
+        if (ALLCH_ON_DESKTOP)
         {
             ///////
             // Desktop
@@ -60,16 +54,14 @@ function __AllchSystem()
                 
                 if (ALLCH_VERBOSE)
                 {
-                    __AllchTrace("Using Xbox achivements (__AllchDefinitionsXbox)");
+                    __AllchTrace("Using Xbox achivements");
                 }
                 
                 _fallback = false;
-                __offline = false;
             }
             else if (ALLCH_USING_STEAMWORKS)
             { 
                 _fallback = false;
-                __offline = false;
                 
                 try
                 {
@@ -103,14 +95,13 @@ function __AllchSystem()
             
             if (not ALLCH_USING_GAMECENTER)
             {
-                __AllchTrace("GameCenter extension is not present, using offline definitions");
+                __AllchTrace("GameCenter extension is not present");
             }
             else
             {
                 __AllchTrace("GameCenter extension is present");
                 
                 _fallback = false;
-                __offline = false;
             }
         }
         else if (ALLCH_ON_ANDROID)
@@ -148,7 +139,6 @@ function __AllchSystem()
                     }
                     
                     _fallback = false;
-                    __offline = false;
                 }
                 else
                 {
@@ -164,7 +154,6 @@ function __AllchSystem()
             }
             
             _fallback = false;
-            __offline = false;
         }
         else if (ALLCH_ON_XBOX_SERIES)
         {
@@ -174,37 +163,26 @@ function __AllchSystem()
             }
             
             _fallback = false;
-            __offline = false;
         }
         else if (ALLCH_ON_SWITCH_X)
         {
             _fallback = false;
-            __offline = ALLCH_SWITCH_X_OFFLINE;
             
             if (ALLCH_VERBOSE)
             {
-                if (__offline)
-                {
-                    __AllchTrace("No remote service available on Switch, using offline");
-                }
-                else
-                {
-                    __AllchTrace("No remote service available on Switch, ignoring all achivements");
-                }
+                __AllchTrace("No remote service available on Switch");
             }
         }
         else
         {          
-            __AllchTrace($"Platform ({os_type}) has no explicit support, falling back on offline");
+            __AllchTrace($"Platform ({os_type}) has no explicit support");
             
             _fallback = false;
-            __offline = true;
         }
         
         if (_fallback)
         {
-            __AllchTrace($"Remote service not available, falling back on offline");
-            __offline = true;
+            __AllchTrace($"Remote service not available");
         }
         
         __onBoot = true;
@@ -221,22 +199,22 @@ function __AllchSystem()
                 if (instance_exists(AllchControllerObject))
                 {
                     //Be nasty when running from the IDE >:(
-                    __AllchSoftError("AllchControllerObject has been deactivated\nPlease ensure that AllchControllerObject is never deactivated\nYou may need to use instance_activate_object(AllchControllerObject)");
+                    __AllchSoftError("`AllchControllerObject` has been deactivated\nPlease ensure that `AllchControllerObject` is never deactivated\nYou may need to use `instance_activate_object(AllchControllerObject)`");
                 }
                 else
                 {
                     static _created = false;
-                    if (_created) __AllchSoftError("AllchControllerObject has been destroyed\nPlease ensure that AllchControllerObject is never destroyed");
+                    if (_created) __AllchSoftError("`AllchControllerObject` has been destroyed\nPlease ensure that `AllchControllerObject` is never destroyed");
                     _created = true;
                     
-                    instance_create_depth(0, 0, __SUS_CONTROLLER_INSTANCE_DEPTH, AllchControllerObject);
+                    instance_create_depth(0, 0, 0, AllchControllerObject);
                 }
             }
         
             //Detect if the controller object has been set to non-persistent
             if (!AllchControllerObject.persistent)
             {
-                __AllchSoftError("AllchControllerObject has been set as non-persistent\nPlease ensure that AllchControllerObject is always persistent");
+                __AllchSoftError("`AllchControllerObject` has been set as non-persistent\nPlease ensure that `AllchControllerObject` is always persistent");
                 AllchControllerObject.persistent = true;
             }
         },

@@ -11,6 +11,8 @@ function AllchPSActivityStart(_activityID)
     
 	if (ALLCH_ON_PS5)
     {
+        var _psGamepad = AllchGetPSGamepad();
+        
         if (not is_string(_activityID))
         {
             if (ALLCH_STRICT)
@@ -18,7 +20,7 @@ function AllchPSActivityStart(_activityID)
                 __AllchError($"`activityID` must be a string");
             }
         }
-        else if (_system.__psGamepad < 0)
+        else if (_psGamepad < 0)
         {
             __AllchSoftError("PlayStation gamepad not set or invalid. Please set the gamepad with `AllchSetPSGamepad()` before calling `AllchPSStartActivity()`");
         }
@@ -38,7 +40,7 @@ function AllchPSActivityStart(_activityID)
             
             var _map = ds_map_create();
             _map[? "activityId"] = _activityID;
-            psn_post_uds_event(_system.__psGamepad, "activityStart", _map);
+            psn_post_uds_event(_psGamepad, "activityStart", _map);
             ds_map_destroy(_map);
             
             _psStartedActivityDict[$ _activityID] = true;
