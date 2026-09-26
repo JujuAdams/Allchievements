@@ -43,28 +43,46 @@ with(__AllchSystem())
             }
             
             var _cacheDict = __xboxAchievementsCache[? __xboxUser];
+            if (not is_struct(_cacheDict))
+            {
+                __AllchWarning($"Warning! No achievements cache for user {__xboxUser}");
+                return;
+            }
+
+            var _invalidCount = 0;
             var _i = 0;
             repeat(array_length(_array))
             {
                 var _achievementData = _array[_i];
-                var _id = _achievementData[$ "id"];
-                
-                if (_id != undefined)
+                if (not is_struct(_achievementData))
                 {
-                    _id = string(_id);
-                    
-                    if (_achievementData[$ "progressState"] == xboxone_achievement_progress_unlocked)
+                    ++_invalidCount;
+                }
+                else
+                {
+                    var _id = _achievementData[$ "id"];
+                    if (_id != undefined)
                     {
-                        if (ALLCH_VERBOSE)
+                        _id = string(_id);
+
+                        if (_achievementData[$ "progressState"] == xboxone_achievement_progress_unlocked)
                         {
-                            __AllchTrace($"Achievement `{_id}` unlocked for user {__xboxUser}");
+                            if (ALLCH_VERBOSE)
+                            {
+                                __AllchTrace($"Achievement `{_id}` unlocked for user {__xboxUser}");
+                            }
+
+                            _cacheDict[$ _id] = true;
                         }
-                        
-                        _cacheDict[$ _id] = true;
                     }
                 }
-                
+
                 ++_i;
+            }
+
+            if (_invalidCount > 0)
+            {
+                __AllchWarning($"Warning! Found {_invalidCount} invalid results");
             }
         }
     }
