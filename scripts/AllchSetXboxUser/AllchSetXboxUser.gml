@@ -5,7 +5,8 @@
 
 function AllchSetXboxUser(_xboxUser)
 {
-    static _system = __AllchSystem();
+    static _system                = __AllchSystem();
+    static _xboxCachedMap         = _system.__xboxCachedMap;
     static _xboxAchievementsCache = _system.__xboxAchievementsCache;
     
     if (ALLCH_USING_GDK)
@@ -15,11 +16,20 @@ function AllchSetXboxUser(_xboxUser)
         
         if (_xboxUser != 0)
         {
-            //If we haven't tried to collect achievements for this user yet, start now
-            if (not ds_map_exists(_xboxAchievementsCache, _xboxUser))
+            if (SUS_ON_XBOX_SERIES)
             {
+                //If we haven't tried to collect achievements for this user yet, start now
+                if (not ds_map_exists(_xboxAchievementsCache, _xboxUser))
+                {
+                    _xboxAchievementsCache[? _xboxUser] = {};
+                    xboxone_get_achievements(_xboxUser);
+                }
+            }
+            else
+            {
+                //No `xboxone_get_achievements()` in the GDK extension
+                _xboxCachedMap[? _xboxUser] = true;
                 _xboxAchievementsCache[? _xboxUser] = {};
-                xboxone_get_achievements(_xboxUser);
             }
         }
         

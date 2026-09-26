@@ -6,5 +6,5 @@ function AllchGetXboxUserReady()
     static _system = __AllchSystem();
     static _xboxCachedMap = _system.__xboxCachedMap;
     
-    return ALLCH_USING_GDK? (_xboxCachedMap[? _system.__xboxUser] ?? false) : true;
+    return ALLCH_ON_XBOX_SERIES? (_xboxCachedMap[? _system.__xboxUser] ?? false) : true;
 }
