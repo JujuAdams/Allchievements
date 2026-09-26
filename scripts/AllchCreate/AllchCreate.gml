@@ -162,6 +162,12 @@ function AllchCreate(_identifier, _config)
     else if (ALLCH_USING_GAMECENTER)
     {
         if (not _funcCheckIsString(_config, "gameCenter")) return;
+        
+        if (_config.gameCenter == "~")
+        {
+            _config.gameCenter = _identifier;
+        }
+
         _config.__ref = _config.gameCenter;
     }
     else
